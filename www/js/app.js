@@ -1,128 +1,134 @@
-// Setup requestAnimationFrame
-requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
-                        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+require.config({
+  baseUrl : 'js/lib',
+  paths : {
+    app : '../app'
+  }
+});
 
-// Create the canvas
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
-canvas.width = 512;
-canvas.height = 480;
-document.body.appendChild(canvas);
+requirejs(['sylvester'], function() {
 
-// Background image
-var bgReady = false;
-var bgImage = new Image();
-bgImage.onload = function () {
-	bgReady = true;
-};
-bgImage.src = "img/background.png";
+  // Setup requestAnimationFrame
+  requestAnimationFrame = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame;
 
-// Hero image
-var heroReady = false;
-var heroImage = new Image();
-heroImage.onload = function () {
-	heroReady = true;
-};
-heroImage.src = "img/hero.png";
+  // Create the canvas
+  var canvas = document.createElement("canvas");
+  var ctx = canvas.getContext("2d");
+  canvas.width = 512;
+  canvas.height = 480;
+  document.body.appendChild(canvas);
 
-// Monster image
-var monsterReady = false;
-var monsterImage = new Image();
-monsterImage.onload = function () {
-	monsterReady = true;
-};
-monsterImage.src = "img/monster.png";
+  // Background image
+  var bgReady = false;
+  var bgImage = new Image();
+  bgImage.onload = function() {
+    bgReady = true;
+  };
+  bgImage.src = "img/background.png";
 
-// Game objects
-var hero = {
-	speed: 256 // movement in pixels per second
-};
-var monster = {};
-var monstersCaught = 0;
+  // Hero image
+  var heroReady = false;
+  var heroImage = new Image();
+  heroImage.onload = function() {
+    heroReady = true;
+  };
+  heroImage.src = "img/hero.png";
 
-// Handle keyboard controls
-var keysDown = {};
+  // Monster image
+  var monsterReady = false;
+  var monsterImage = new Image();
+  monsterImage.onload = function() {
+    monsterReady = true;
+  };
+  monsterImage.src = "img/monster.png";
 
-addEventListener("keydown", function (e) {
-	keysDown[e.keyCode] = true;
-}, false);
+  // Game objects
+  var hero = {
+    speed : 256 // movement in pixels per second
+  };
+  var monster = {};
+  var monstersCaught = 0;
 
-addEventListener("keyup", function (e) {
-	delete keysDown[e.keyCode];
-}, false);
+  // Handle keyboard controls
+  var keysDown = {};
 
-// Reset the game when the player catches a monster
-var reset = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
+  addEventListener("keydown", function(e) {
+    keysDown[e.keyCode] = true;
+  }, false);
 
-	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
-};
+  addEventListener("keyup", function(e) {
+    delete keysDown[e.keyCode];
+  }, false);
 
-// Update game objects
-var update = function (modifier) {
-	if (38 in keysDown) { // Player holding up
-		hero.y -= hero.speed * modifier;
-	}
-	if (40 in keysDown) { // Player holding down
-		hero.y += hero.speed * modifier;
-	}
-	if (37 in keysDown) { // Player holding left
-		hero.x -= hero.speed * modifier;
-	}
-	if (39 in keysDown) { // Player holding right
-		hero.x += hero.speed * modifier;
-	}
+  // Reset the game when the player catches a monster
+  var reset = function() {
+    hero.x = canvas.width / 2;
+    hero.y = canvas.height / 2;
 
-	// Are they touching?
-	if (
-		hero.x <= (monster.x + 32)
-		&& monster.x <= (hero.x + 32)
-		&& hero.y <= (monster.y + 32)
-		&& monster.y <= (hero.y + 32)
-	) {
-		++monstersCaught;
-		reset();
-	}
-};
+    // Throw the monster somewhere on the screen randomly
+    monster.x = 32 + (Math.random() * (canvas.width - 64));
+    monster.y = 32 + (Math.random() * (canvas.height - 64));
+  };
 
-// Draw everything
-var render = function () {
-	if (bgReady) {
-		ctx.drawImage(bgImage, 0, 0);
-	}
+  // Update game objects
+  var update = function(modifier) {
+    if (38 in keysDown) {// Player holding up
+      hero.y -= hero.speed * modifier;
+    }
+    if (40 in keysDown) {// Player holding down
+      hero.y += hero.speed * modifier;
+    }
+    if (37 in keysDown) {// Player holding left
+      hero.x -= hero.speed * modifier;
+    }
+    if (39 in keysDown) {// Player holding right
+      hero.x += hero.speed * modifier;
+    }
 
-	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
-	}
+    // Are they touching?
+    if (hero.x <= (monster.x + 32) && monster.x <= (hero.x + 32) && hero.y <= (monster.y + 32) && monster.y <= (hero.y + 32)) {++monstersCaught;
+      reset();
+    }
+  };
 
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
-	}
+  // Draw everything
+  var render = function() {
+    if (bgReady) {
+      ctx.drawImage(bgImage, 0, 0);
+    }
 
-	// Score
-	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
-};
+    if (heroReady) {
+      ctx.drawImage(heroImage, hero.x, hero.y);
+    }
 
-// The main game loop
-var main = function () {
-	var now = Date.now();
-	var delta = now - then;
+    if (monsterReady) {
+      ctx.drawImage(monsterImage, monster.x, monster.y);
+    }
 
-	update(delta / 1000);
-	render();
+    // Score
+    ctx.fillStyle = "rgb(250, 250, 250)";
+    ctx.font = "24px Helvetica";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+  };
 
-	then = now;
-	requestAnimationFrame(main);
-};
+  // The main game loop
+  var main = function() {
+    var now = Date.now();
+    var delta = now - then;
 
-// Let's play this game!
-reset();
-var then = Date.now();
-main();
+    update(delta / 1000);
+    render();
+
+    then = now;
+    requestAnimationFrame(main);
+  };
+
+  // Let's play this game!
+  reset();
+  var then = Date.now();
+  main();
+
+});
