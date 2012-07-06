@@ -81,7 +81,6 @@ require(['sylvester', 'jquery'], function(sylvester, $) {
           this.ready = true;
         }.bind(twitterImage);
         twitterImages.push(twitterImage);
-        console.log(val.profile_image_url);
       });
     });
 
