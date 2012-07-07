@@ -124,6 +124,11 @@ require(['sylvester', 'jquery'], function(sylvester, $) {
   }, false);
 
   canvas.addEventListener("click", function (e) {
+    if(isDead) {
+      restart();
+      return;
+    }
+
     clickedLocations.push({
       x: e.clientX,
       y: e.clientY,
@@ -206,7 +211,7 @@ require(['sylvester', 'jquery'], function(sylvester, $) {
 
     ctx.font = "20px Helvetica";
     ctx.fillStyle = "rgb(255, 255, 255)";
-    ctx.fillText("Hit enter to restart", 170, canvas.height - 100);
+    ctx.fillText("Click to restart", 170, canvas.height - 100);
   }
 
   // Update game objects
