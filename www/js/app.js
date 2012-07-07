@@ -42,8 +42,8 @@ require(['sylvester', 'jquery'], function(sylvester, $) {
   // Create the canvas
   var canvas = document.createElement("canvas");
   var ctx = canvas.getContext("2d");
-  canvas.width = 512;
-  canvas.height = 480;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
   // Global font properties
@@ -81,7 +81,6 @@ require(['sylvester', 'jquery'], function(sylvester, $) {
           this.ready = true;
         }.bind(twitterImage);
         twitterImages.push(twitterImage);
-        console.log(val.profile_image_url);
       });
     });
 
@@ -194,7 +193,7 @@ require(['sylvester', 'jquery'], function(sylvester, $) {
 
   function renderDeath() {
     // For some reason, need to do this else the font isn't aliased
-    ctx.drawImage(bgImage.image, 0, 0);
+    ctx.drawImage(bgImage.image, 0, 0, canvas.width, canvas.height);
 
     ctx.font = "52px Helvetica";
     ctx.fillStyle = "rgb(75, 0, 0)";
@@ -327,7 +326,7 @@ require(['sylvester', 'jquery'], function(sylvester, $) {
   // Draw everything
   function render() {
     if (bgImage.ready) {
-      ctx.drawImage(bgImage.image, 0, 0);
+      ctx.drawImage(bgImage.image, 0, 0, canvas.width, canvas.height);
     }
 
     if (heroImage.ready) {
